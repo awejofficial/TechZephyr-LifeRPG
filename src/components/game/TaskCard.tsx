@@ -6,20 +6,20 @@ import { Task, AttributeType, TaskDifficulty } from '@/types/game';
 import { Shield, Brain, Palette, Clock, Users, Check, Trash2, Calendar, AlertCircle } from 'lucide-react';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-const attributeConfig: Record<AttributeType, { label: string; icon: typeof Shield; color: string }> = {
-  strength: { label: 'Strength', icon: Shield, color: 'text-red-400 bg-red-500/10 border-red-500/20' },
-  intellect: { label: 'Intellect', icon: Brain, color: 'text-blue-400 bg-blue-500/10 border-blue-500/20' },
-  creativity: { label: 'Creativity', icon: Palette, color: 'text-purple-400 bg-purple-500/10 border-purple-500/20' },
-  discipline: { label: 'Discipline', icon: Clock, color: 'text-amber-400 bg-amber-500/10 border-amber-500/20' },
-  social: { label: 'Social', icon: Users, color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20' },
+const attributeConfig: Record<AttributeType, { label: string; icon: typeof Shield; textColor: string; borderLeft: string }> = {
+  strength: { label: 'Strength', icon: Shield, textColor: 'text-rose-400', borderLeft: 'border-l-rose-500' },
+  intellect: { label: 'Intellect', icon: Brain, textColor: 'text-blue-400', borderLeft: 'border-l-blue-500' },
+  creativity: { label: 'Creativity', icon: Palette, textColor: 'text-purple-400', borderLeft: 'border-l-purple-500' },
+  discipline: { label: 'Discipline', icon: Clock, textColor: 'text-amber-400', borderLeft: 'border-l-amber-500' },
+  social: { label: 'Social', icon: Users, textColor: 'text-emerald-400', borderLeft: 'border-l-emerald-500' },
 };
 
-const difficultyConfig: Record<TaskDifficulty, { label: string; xp: number; color: string }> = {
-  trivial: { label: 'Trivial', xp: 5, color: 'text-muted-foreground bg-muted border-border' },
-  easy: { label: 'Easy', xp: 10, color: 'text-emerald-400 bg-emerald-500/10 border-emerald-500/30' },
-  medium: { label: 'Medium', xp: 20, color: 'text-blue-400 bg-blue-500/10 border-blue-500/30' },
-  hard: { label: 'Hard', xp: 50, color: 'text-amber-400 bg-amber-500/10 border-amber-500/30' },
-  epic: { label: 'Epic', xp: 100, color: 'text-red-400 bg-red-500/10 border-red-500/30' },
+const difficultyConfig: Record<TaskDifficulty, { label: string; xp: number; textColor: string }> = {
+  trivial: { label: 'Trivial', xp: 5, textColor: 'text-muted-foreground' },
+  easy: { label: 'Easy', xp: 10, textColor: 'text-emerald-400' },
+  medium: { label: 'Medium', xp: 20, textColor: 'text-blue-400' },
+  hard: { label: 'Hard', xp: 50, textColor: 'text-amber-400 font-semibold' },
+  epic: { label: 'Epic', xp: 100, textColor: 'text-rose-400 font-bold' },
 };
 
 export function TaskCard({ task }: { task: Task }) {
@@ -111,45 +111,45 @@ export function TaskCard({ task }: { task: Task }) {
   return (
     <motion.div
       layout
-      initial={{ opacity: 0, y: 15 }}
+      initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, scale: 0.95 }}
+      exit={{ opacity: 0, scale: 0.96 }}
       transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-      className={`group relative rounded-xl border transition-all duration-200 bg-card p-4 sm:p-5 shadow-sm hover:border-primary/40 ${
-        task.is_completed ? 'opacity-60 bg-muted/40 border-border/50' : 'border-border'
+      className={`group relative rounded-xl border border-l-4 transition-all duration-150 bg-card p-4 sm:p-4.5 shadow-sm hover:border-border hover:bg-card/90 ${
+        task.is_completed
+          ? 'opacity-55 bg-secondary/30 border-border/60 border-l-muted-foreground/40'
+          : `border-border ${attr.borderLeft}`
       }`}
     >
-      <div className="flex items-start gap-3 sm:gap-4">
-        {/* Satisfying Quest Completion Button */}
-        <motion.button
+      <div className="flex items-start gap-3 sm:gap-3.5">
+        {/* Crisp Checkbox Button */}
+        <button
           type="button"
-          whileTap={{ scale: 0.85 }}
-          whileHover={{ scale: 1.05 }}
           onClick={handleToggle}
           disabled={task.is_completed || completeMutation.isPending}
-          className={`mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
+          className={`mt-0.5 w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
             task.is_completed
               ? 'bg-primary border-primary text-primary-foreground shadow-sm'
-              : 'border-muted-foreground/40 hover:border-primary hover:bg-primary/10'
+              : 'border-muted-foreground/50 hover:border-primary hover:bg-primary/10'
           }`}
           aria-label={`Mark quest "${task.title}" as ${task.is_completed ? 'completed' : 'complete'}`}
         >
           {task.is_completed && <Check className="w-3.5 h-3.5 stroke-[3]" />}
-        </motion.button>
+        </button>
 
         {/* Quest Information */}
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between gap-2">
             <h3
-              className={`font-semibold text-base leading-snug tracking-tight truncate ${
+              className={`font-semibold text-sm sm:text-base leading-snug tracking-tight truncate ${
                 task.is_completed ? 'line-through text-muted-foreground' : 'text-foreground'
               }`}
             >
               {task.title}
             </h3>
 
-            {/* XP Reward Pill */}
-            <div className="flex items-center gap-1 font-mono text-xs font-bold text-primary px-2 py-0.5 rounded-md bg-primary/10 border border-primary/20 shrink-0">
+            {/* XP Reward */}
+            <div className="flex items-center gap-1 font-mono text-xs font-bold text-primary px-2 py-0.5 rounded-md bg-secondary border border-border shrink-0">
               <span>+{diff.xp}</span>
               <span className="text-[10px] text-muted-foreground">XP</span>
             </div>
@@ -161,57 +161,58 @@ export function TaskCard({ task }: { task: Task }) {
             </p>
           )}
 
-          {/* Badges & Meta */}
-          <div className="flex flex-wrap items-center gap-2 mt-3 text-xs">
-            {/* Attribute Badge */}
-            <div className={`flex items-center gap-1 px-2 py-0.5 rounded-md border font-medium ${attr.color}`}>
-              <AttrIcon className="w-3 h-3" />
-              <span>{attr.label}</span>
-            </div>
+          {/* Clean Simplified Metadata Row */}
+          <div className="flex flex-wrap items-center gap-3 mt-2.5 text-xs">
+            {/* Attribute text with icon */}
+            <span className={`inline-flex items-center gap-1 font-semibold ${attr.textColor}`}>
+              <AttrIcon className="w-3.5 h-3.5" />
+              {attr.label}
+            </span>
 
-            {/* Difficulty Badge */}
-            <div className={`px-2 py-0.5 rounded-md border font-semibold uppercase tracking-wider text-[10px] ${diff.color}`}>
+            <span className="text-border">•</span>
+
+            {/* Difficulty */}
+            <span className={`text-xs ${diff.textColor}`}>
               {diff.label}
-            </div>
+            </span>
 
             {/* Due date if available */}
             {task.due_date && (
-              <div className="flex items-center gap-1 text-muted-foreground text-[11px]">
-                <Calendar className="w-3 h-3" />
-                <span>{task.due_date}</span>
-              </div>
+              <>
+                <span className="text-border">•</span>
+                <span className="inline-flex items-center gap-1 text-muted-foreground text-[11px]">
+                  <Calendar className="w-3 h-3" />
+                  {task.due_date}
+                </span>
+              </>
             )}
 
-            {/* Recurrence */}
+            {/* Recurrence if repeating */}
             {task.recurrence !== 'one_time' && (
-              <span className="text-[10px] uppercase font-semibold text-muted-foreground/80 px-1.5 py-0.5 rounded bg-secondary">
-                {task.recurrence}
-              </span>
-            )}
-
-            {/* Completed badge */}
-            {task.is_completed && (
-              <span className="text-[10px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                Fulfilled
-              </span>
+              <>
+                <span className="text-border">•</span>
+                <span className="text-[11px] font-medium text-muted-foreground capitalize">
+                  {task.recurrence.replace('_', ' ')}
+                </span>
+              </>
             )}
           </div>
 
           {/* Error / Cooldown alert */}
           {(errorMessage || isCooldown) && (
-            <div className="mt-2.5 flex items-center gap-1.5 text-xs text-destructive font-medium">
+            <div className="mt-2 flex items-center gap-1.5 text-xs text-destructive font-medium">
               <AlertCircle className="w-3.5 h-3.5 shrink-0" />
               <span>{errorMessage || 'Quest is on recovery cooldown.'}</span>
             </div>
           )}
         </div>
 
-        {/* Delete Quest Button */}
+        {/* Delete Quest Button - hidden until hover/focus */}
         <button
           type="button"
           onClick={() => deleteMutation.mutate(task.id)}
           disabled={deleteMutation.isPending}
-          className="opacity-70 sm:opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 min-w-[36px] min-h-[36px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none"
+          className="opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 transition-opacity p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 shrink-0 focus-visible:opacity-100 focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none"
           aria-label={`Delete quest "${task.title}"`}
           title="Delete quest"
         >

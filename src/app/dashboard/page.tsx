@@ -5,6 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Task, AttributeType } from '@/types/game';
 import { TaskCard } from '@/components/game/TaskCard';
 import { CreateTaskDialog } from '@/components/game/CreateTaskDialog';
+import { StarterQuestProtocols } from '@/components/game/StarterQuestProtocols';
 import { Plus, Filter, Search, Sparkles, CheckCircle2, Circle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -160,24 +161,28 @@ export default function DashboardPage() {
         <div className="p-6 rounded-2xl bg-destructive/10 border border-destructive/30 text-center">
           <p className="text-sm font-semibold text-destructive">Failed to load quests. Please refresh.</p>
         </div>
+      ) : tasks.length === 0 ? (
+        <StarterQuestProtocols onCustomQuest={() => setIsCreateOpen(true)} />
       ) : filteredTasks.length === 0 ? (
-        <div className="p-12 text-center border-2 border-dashed border-border/80 rounded-2xl bg-card/30">
-          <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 mx-auto flex items-center justify-center text-primary mb-4">
-            <Sparkles className="w-7 h-7" />
+        <div className="p-10 text-center border border-border rounded-2xl bg-card">
+          <div className="w-10 h-10 rounded-xl bg-secondary border border-border mx-auto flex items-center justify-center text-muted-foreground mb-3">
+            <Filter className="w-5 h-5" />
           </div>
-          <h2 className="text-lg font-bold text-foreground">No Quests Found</h2>
-          <p className="text-xs sm:text-sm text-muted-foreground max-w-sm mx-auto mt-1 mb-6">
-            {tasks.length === 0
-              ? 'Your adventure begins with a single step! Add your first real-world task to earn XP.'
-              : 'No quests match your active filter criteria.'}
+          <h2 className="text-base font-bold text-foreground">No Quests Match Your Filters</h2>
+          <p className="text-xs text-muted-foreground max-w-sm mx-auto mt-1 mb-4">
+            Try adjusting your attribute or status selection to view your active quest log.
           </p>
           <button
             type="button"
-            onClick={() => setIsCreateOpen(true)}
-            className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-md hover:bg-primary/90 transition-all"
+            onClick={() => {
+              setStatusFilter('all');
+              setSelectedAttribute('all');
+              setSearchQuery('');
+            }}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-secondary border border-border hover:bg-secondary/70 text-xs font-bold text-foreground transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
           >
-            <Plus className="w-4 h-4" />
-            <span>Forge First Quest</span>
+            <X className="w-3.5 h-3.5" />
+            <span>Reset All Filters</span>
           </button>
         </div>
       ) : (
