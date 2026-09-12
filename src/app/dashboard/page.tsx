@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Task, AttributeType } from '@/types/game';
 import { TaskCard } from '@/components/game/TaskCard';
 import { CreateTaskDialog } from '@/components/game/CreateTaskDialog';
-import { Plus, Filter, Search, Sparkles, CheckCircle2, Circle } from 'lucide-react';
+import { Plus, Filter, Search, Sparkles, CheckCircle2, Circle, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function DashboardPage() {
@@ -58,7 +58,7 @@ export default function DashboardPage() {
         <button
           type="button"
           onClick={() => setIsCreateOpen(true)}
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-lg hover:bg-primary/90 transition-all active:scale-95 shrink-0 glow-primary"
+          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-lg hover:bg-primary/90 transition-all active:scale-95 shrink-0 glow-primary focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
         >
           <Plus className="w-4 h-4" />
           <span>New Quest</span>
@@ -72,7 +72,7 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setStatusFilter('active')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
               statusFilter === 'active'
                 ? 'bg-card text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
@@ -84,7 +84,7 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setStatusFilter('completed')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1.5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
               statusFilter === 'completed'
                 ? 'bg-card text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
@@ -96,7 +96,7 @@ export default function DashboardPage() {
           <button
             type="button"
             onClick={() => setStatusFilter('all')}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
               statusFilter === 'all'
                 ? 'bg-card text-foreground shadow-sm'
                 : 'text-muted-foreground hover:text-foreground'
@@ -113,7 +113,7 @@ export default function DashboardPage() {
             <select
               value={selectedAttribute}
               onChange={(e) => setSelectedAttribute(e.target.value as AttributeType | 'all')}
-              className="px-3 py-1.5 bg-secondary/50 border border-border rounded-xl text-xs text-foreground font-semibold focus:border-primary outline-none"
+              className="px-3 py-1.5 bg-secondary/50 border border-border rounded-xl text-xs text-foreground font-semibold focus:border-primary focus-visible:ring-2 focus-visible:ring-primary outline-none"
               aria-label="Filter by attribute"
             >
               <option value="all">All Attributes</option>
@@ -125,16 +125,26 @@ export default function DashboardPage() {
             </select>
           </div>
 
-          {/* Search input */}
+          {/* Search input with clear button */}
           <div className="relative flex-1">
-            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+            <Search className="w-3.5 h-3.5 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground pointer-events-none" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search quests..."
-              className="w-full pl-8 pr-3 py-1.5 bg-secondary/50 border border-border rounded-xl text-xs text-foreground placeholder:text-muted-foreground focus:border-primary outline-none"
+              className="w-full pl-8 pr-7 py-1.5 bg-secondary/50 border border-border rounded-xl text-xs text-foreground placeholder:text-muted-foreground focus:border-primary focus-visible:ring-2 focus-visible:ring-primary outline-none"
             />
+            {searchQuery && (
+              <button
+                type="button"
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-0.5 rounded transition-colors"
+                aria-label="Clear search query"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
         </div>
       </div>

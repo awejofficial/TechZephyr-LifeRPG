@@ -50,7 +50,7 @@ export function GoogleAuthButton({
       whileTap={{ scale: 0.98 }}
       onClick={handleGoogleSignIn}
       disabled={isLoading}
-      className="w-full h-11 px-4 rounded-xl border border-border/90 bg-secondary/40 text-foreground font-semibold text-sm shadow-sm hover:border-border transition-all flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed group"
+      className="w-full h-11 px-4 rounded-xl border border-border/90 bg-secondary/40 text-foreground font-semibold text-sm shadow-sm hover:border-border transition-all flex items-center justify-center gap-3 disabled:opacity-60 disabled:cursor-not-allowed group focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
       aria-label={label}
     >
       {isLoading ? (
