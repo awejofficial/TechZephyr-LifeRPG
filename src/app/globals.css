@@ -1,0 +1,168 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Default "Dark Knight RPG" Theme */
+  --background: 240 12% 6%;         /* #0c0c12 */
+  --foreground: 210 20% 98%;        /* #f8fafc */
+  
+  --card: 240 10% 9%;               /* #13131d */
+  --card-foreground: 210 20% 98%;
+  
+  --popover: 240 10% 9%;
+  --popover-foreground: 210 20% 98%;
+  
+  --primary: 265 85% 62%;           /* #8b5cf6 radiant violet */
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 240 8% 16%;          /* #232330 */
+  --secondary-foreground: 210 20% 90%;
+  
+  --muted: 240 8% 14%;
+  --muted-foreground: 240 5% 65%;
+  
+  --accent: 175 80% 45%;            /* #14b8a6 cyan-teal */
+  --accent-foreground: 0 0% 100%;
+  
+  --destructive: 0 84% 60%;         /* #ef4444 */
+  --destructive-foreground: 0 0% 100%;
+  
+  --border: 240 8% 18%;
+  --input: 240 8% 18%;
+  --ring: 265 85% 62%;
+  
+  /* Game Tokens */
+  --gold: 43 96% 54%;               /* #f59e0b gold */
+  --xp-fill: 265 85% 62%;           /* #8b5cf6 xp */
+  --streak: 16 95% 54%;             /* #ea580c fire orange */
+  
+  --radius: 0.75rem;
+}
+
+/* Cyberpunk Neon Theme */
+[data-theme="cyberpunk"] {
+  --background: 260 25% 5%;         /* #0a0812 */
+  --foreground: 180 100% 95%;       /* #e6ffff */
+  
+  --card: 260 20% 9%;               /* #141021 */
+  --card-foreground: 180 100% 95%;
+  
+  --primary: 186 100% 50%;          /* #00f0ff electric cyan */
+  --primary-foreground: 260 25% 5%;
+  
+  --secondary: 320 80% 18%;
+  --secondary-foreground: 320 100% 90%;
+  
+  --accent: 325 100% 55%;           /* #ff1a8c hot pink */
+  --accent-foreground: 0 0% 100%;
+  
+  --border: 260 20% 20%;
+  --input: 260 20% 20%;
+  --ring: 186 100% 50%;
+  
+  --gold: 50 100% 54%;
+  --xp-fill: 186 100% 50%;
+  --streak: 330 100% 55%;
+}
+
+/* Forest Ranger Theme */
+[data-theme="forest"] {
+  --background: 150 25% 5%;         /* #09140c */
+  --foreground: 140 30% 95%;        /* #f0fdf4 */
+  
+  --card: 150 20% 9%;               /* #102316 */
+  --card-foreground: 140 30% 95%;
+  
+  --primary: 142 70% 45%;           /* #22c55e emerald */
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 150 15% 16%;
+  --secondary-foreground: 140 30% 90%;
+  
+  --accent: 84 80% 45%;             /* #84cc16 moss lime */
+  --accent-foreground: 0 0% 100%;
+  
+  --border: 150 15% 20%;
+  --input: 150 15% 20%;
+  --ring: 142 70% 45%;
+  
+  --gold: 45 93% 47%;
+  --xp-fill: 142 70% 45%;
+  --streak: 25 95% 50%;
+}
+
+/* Solar Flare Theme */
+[data-theme="solar"] {
+  --background: 20 25% 5%;          /* #140c06 */
+  --foreground: 30 30% 95%;
+  
+  --card: 20 20% 9%;                /* #24160a */
+  --card-foreground: 30 30% 95%;
+  
+  --primary: 38 92% 50%;            /* #f59e0b blazing gold */
+  --primary-foreground: 0 0% 100%;
+  
+  --secondary: 20 15% 16%;
+  --secondary-foreground: 30 30% 90%;
+  
+  --accent: 14 90% 55%;             /* #f97316 flame orange */
+  --accent-foreground: 0 0% 100%;
+  
+  --border: 20 15% 20%;
+  --input: 20 15% 20%;
+  --ring: 38 92% 50%;
+  
+  --gold: 42 100% 50%;
+  --xp-fill: 38 92% 50%;
+  --streak: 10 95% 55%;
+}
+
+body {
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  min-height: 100vh;
+}
+
+/* Custom Scrollbar for gaming feel */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: hsl(var(--background));
+}
+
+::-webkit-scrollbar-thumb {
+  background: hsl(var(--border));
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: hsl(var(--primary) / 0.5);
+}
+
+/* Focus styles for keyboard accessibility */
+:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 2px;
+}
+
+/* Glowing utilities */
+.glow-primary {
+  box-shadow: 0 0 20px -3px hsl(var(--primary) / 0.35);
+}
+
+.glow-gold {
+  box-shadow: 0 0 20px -3px hsl(var(--gold) / 0.4);
+}
+
+.glow-streak {
+  box-shadow: 0 0 20px -3px hsl(var(--streak) / 0.45);
+}
+
+.text-glow {
+  text-shadow: 0 0 12px hsl(var(--primary) / 0.6);
+}
