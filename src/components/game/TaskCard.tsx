@@ -127,7 +127,7 @@ export function TaskCard({ task }: { task: Task }) {
           whileHover={{ scale: 1.05 }}
           onClick={handleToggle}
           disabled={task.is_completed || completeMutation.isPending}
-          className={`mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all ${
+          className={`mt-0.5 w-6 h-6 rounded-lg border-2 flex items-center justify-center transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
             task.is_completed
               ? 'bg-primary border-primary text-primary-foreground shadow-sm'
               : 'border-muted-foreground/40 hover:border-primary hover:bg-primary/10'
@@ -211,8 +211,8 @@ export function TaskCard({ task }: { task: Task }) {
           type="button"
           onClick={() => deleteMutation.mutate(task.id)}
           disabled={deleteMutation.isPending}
-          className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10"
-          aria-label="Delete quest"
+          className="opacity-70 sm:opacity-0 group-hover:opacity-100 focus-visible:opacity-100 transition-opacity p-2 rounded-lg text-muted-foreground hover:text-destructive hover:bg-destructive/10 min-w-[36px] min-h-[36px] flex items-center justify-center focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none"
+          aria-label={`Delete quest "${task.title}"`}
           title="Delete quest"
         >
           <Trash2 className="w-4 h-4" />

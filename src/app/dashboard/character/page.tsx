@@ -195,7 +195,7 @@ export default function CharacterPage() {
             return (
               <div
                 key={attr.key}
-                className="bg-card border border-border rounded-xl p-5 hover:border-primary/40 transition-all shadow-sm"
+                className="bg-card border border-border rounded-xl p-5 hover:border-primary/40 hover:-translate-y-0.5 transition-all shadow-sm"
               >
                 <div className="flex items-center justify-between gap-3 mb-3">
                   <div className="flex items-center gap-2.5">
@@ -217,9 +217,14 @@ export default function CharacterPage() {
                 </p>
 
                 {/* Progress bar inside attribute */}
-                <div className="h-1.5 w-full bg-secondary rounded-full overflow-hidden">
+                <div
+                  className="h-1.5 w-full bg-secondary rounded-full overflow-hidden"
+                  role="progressbar"
+                  aria-valuenow={xpValue}
+                  aria-label={`${attr.name} attribute progress`}
+                >
                   <div
-                    className={`h-full rounded-full bg-gradient-to-r ${attr.color}`}
+                    className={`h-full rounded-full bg-gradient-to-r ${attr.color} transition-all duration-500`}
                     style={{ width: `${Math.min(100, (xpValue % 25) * 4)}%` }}
                   />
                 </div>

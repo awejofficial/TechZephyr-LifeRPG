@@ -49,7 +49,7 @@ export function Sidebar() {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                     isActive
                       ? 'bg-primary text-primary-foreground shadow-md font-bold'
                       : 'text-muted-foreground hover:text-foreground hover:bg-secondary/60'
@@ -68,7 +68,7 @@ export function Sidebar() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors"
+            className="w-full flex items-center gap-2.5 px-3.5 py-2.5 rounded-xl text-sm font-semibold text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-colors focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none"
           >
             <LogOut className="w-4 h-4" />
             <span>Sign Out</span>
@@ -78,7 +78,7 @@ export function Sidebar() {
 
       {/* Mobile Bottom Navigation */}
       <nav
-        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border/70 px-2 pb-safe"
+        className="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-card/95 backdrop-blur-md border-t border-border/70 px-2 pb-safe shadow-lg"
         aria-label="Mobile navigation"
       >
         <div className="flex items-center justify-around">
@@ -90,14 +90,15 @@ export function Sidebar() {
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex flex-col items-center gap-0.5 py-3 px-3 rounded-xl transition-all ${
-                  isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
+                className={`relative min-h-[48px] min-w-[48px] flex flex-col items-center justify-center gap-0.5 py-2 px-3 rounded-xl transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
+                  isActive ? 'text-primary font-bold' : 'text-muted-foreground hover:text-foreground'
                 }`}
+                title={item.name}
               >
                 <Icon className={`w-5 h-5 ${isActive ? 'text-primary' : ''}`} />
-                <span className="text-[10px] font-semibold">{item.name}</span>
+                <span className="text-[10px] font-semibold tracking-tight">{item.name}</span>
                 {isActive && (
-                  <span className="absolute bottom-1.5 w-1 h-1 rounded-full bg-primary" />
+                  <span className="absolute bottom-1 w-1.5 h-1.5 rounded-full bg-primary shadow-sm" />
                 )}
               </Link>
             );
@@ -105,10 +106,12 @@ export function Sidebar() {
           <button
             type="button"
             onClick={handleSignOut}
-            className="flex flex-col items-center gap-0.5 py-3 px-3 text-muted-foreground hover:text-destructive transition-colors rounded-xl"
+            className="min-h-[48px] min-w-[48px] flex flex-col items-center justify-center gap-0.5 py-2 px-3 text-muted-foreground hover:text-destructive transition-colors rounded-xl focus-visible:ring-2 focus-visible:ring-destructive focus-visible:outline-none"
+            title="Sign Out"
+            aria-label="Sign Out"
           >
             <LogOut className="w-5 h-5" />
-            <span className="text-[10px] font-semibold">Logout</span>
+            <span className="text-[10px] font-semibold tracking-tight">Logout</span>
           </button>
         </div>
       </nav>

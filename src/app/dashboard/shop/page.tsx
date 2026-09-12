@@ -183,23 +183,25 @@ export default function ShopPage() {
 
                   {/* Visual theme palette swatches */}
                   {isTheme && item.theme_config && (
-                    <div className="flex items-center gap-2 p-2 rounded-xl bg-secondary/50 border border-border/70 mb-4">
+                    <div className="flex items-center gap-2 p-2.5 rounded-xl bg-secondary/50 border border-border/70 mb-4">
                       <span className="text-[10px] text-muted-foreground font-semibold">Palette:</span>
-                      <div
-                        className="w-4 h-4 rounded-full border border-white/20"
-                        style={{ backgroundColor: item.theme_config.primary }}
-                        title="Primary"
-                      />
-                      <div
-                        className="w-4 h-4 rounded-full border border-white/20"
-                        style={{ backgroundColor: item.theme_config.secondary }}
-                        title="Secondary"
-                      />
-                      <div
-                        className="w-4 h-4 rounded-full border border-white/20"
-                        style={{ backgroundColor: item.theme_config.bg }}
-                        title="Background"
-                      />
+                      <div className="flex items-center gap-1.5">
+                        <div
+                          className="w-4 h-4 rounded-full border border-white/20 shadow-sm"
+                          style={{ backgroundColor: item.theme_config.primary }}
+                          title={`Primary: ${item.theme_config.primary}`}
+                        />
+                        <div
+                          className="w-4 h-4 rounded-full border border-white/20 shadow-sm"
+                          style={{ backgroundColor: item.theme_config.secondary }}
+                          title={`Secondary: ${item.theme_config.secondary}`}
+                        />
+                        <div
+                          className="w-4 h-4 rounded-full border border-white/20 shadow-sm"
+                          style={{ backgroundColor: item.theme_config.bg }}
+                          title={`Background: ${item.theme_config.bg}`}
+                        />
+                      </div>
                     </div>
                   )}
                 </div>
@@ -212,7 +214,7 @@ export default function ShopPage() {
                       disabled
                       className="w-full py-2 px-3 rounded-xl bg-primary/20 text-primary font-bold text-xs cursor-default flex items-center justify-center gap-1.5"
                     >
-                      <Check className="w-3.5 h-3.5" />
+                      <Check className="w-3.5 h-3.5 stroke-[2.5]" />
                       <span>Active Theme</span>
                     </button>
                   ) : item.is_owned && isTheme ? (
@@ -220,16 +222,16 @@ export default function ShopPage() {
                       type="button"
                       onClick={() => equipMutation.mutate(item)}
                       disabled={equipMutation.isPending}
-                      className="w-full py-2 px-3 rounded-xl bg-secondary hover:bg-primary hover:text-primary-foreground font-bold text-xs transition-colors border border-border shadow-sm flex items-center justify-center gap-1.5"
+                      className="w-full py-2.5 px-3 rounded-xl bg-secondary hover:bg-primary hover:text-primary-foreground font-bold text-xs transition-all border border-border shadow-sm flex items-center justify-center gap-1.5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none active:scale-[0.98]"
                     >
                       <Sparkles className="w-3.5 h-3.5" />
-                      <span>Equip Theme</span>
+                      <span>{equipMutation.isPending ? 'Equipping...' : 'Equip Theme'}</span>
                     </button>
                   ) : item.is_owned ? (
                     <button
                       type="button"
                       disabled
-                      className="w-full py-2 px-3 rounded-xl bg-secondary text-muted-foreground font-semibold text-xs cursor-default"
+                      className="w-full py-2.5 px-3 rounded-xl bg-secondary text-muted-foreground font-semibold text-xs cursor-default"
                     >
                       In Inventory
                     </button>
@@ -238,14 +240,20 @@ export default function ShopPage() {
                       type="button"
                       onClick={() => purchaseMutation.mutate(item.id)}
                       disabled={!canAfford || purchaseMutation.isPending}
-                      className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5 ${
+                      className={`w-full py-2.5 px-4 rounded-xl font-bold text-xs shadow-md transition-all flex items-center justify-center gap-1.5 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                         canAfford
-                          ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                          ? 'bg-primary text-primary-foreground hover:bg-primary/90 active:scale-[0.98] glow-primary'
                           : 'bg-muted text-muted-foreground cursor-not-allowed opacity-60'
                       }`}
                     >
                       <Coins className="w-3.5 h-3.5" />
-                      <span>{canAfford ? `Purchase for ${item.price_gold} Gold` : 'Insufficient Gold'}</span>
+                      <span>
+                        {purchaseMutation.isPending
+                          ? 'Purchasing...'
+                          : canAfford
+                          ? `Purchase for ${item.price_gold} Gold`
+                          : 'Insufficient Gold'}
+                      </span>
                     </button>
                   )}
                 </div>

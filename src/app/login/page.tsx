@@ -126,7 +126,7 @@ export default function LoginPage() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="hero@kingdom.com"
-                className="w-full h-11 pl-10 pr-3.5 bg-secondary/40 border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                className="w-full h-11 pl-10 pr-3.5 bg-secondary/40 border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:ring-1 focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary outline-none transition-all"
               />
             </div>
           </div>
@@ -150,14 +150,13 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="••••••••"
-                className="w-full h-11 pl-10 pr-10 bg-secondary/40 border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all font-mono"
+                className="w-full h-11 pl-10 pr-10 bg-secondary/40 border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground/70 focus:border-primary focus:ring-1 focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary outline-none transition-all font-mono"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground p-1 rounded transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
-                tabIndex={-1}
               >
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
@@ -168,7 +167,7 @@ export default function LoginPage() {
             type="submit"
             whileTap={{ scale: 0.98 }}
             disabled={isLoading}
-            className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-lg hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-60 glow-primary active:scale-95"
+            className="w-full h-11 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-lg hover:bg-primary/90 transition-all flex items-center justify-center gap-2 mt-2 disabled:opacity-60 glow-primary active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
           >
             {isLoading ? (
               <>

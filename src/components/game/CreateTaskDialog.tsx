@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { AttributeType, TaskDifficulty, TaskRecurrence } from '@/types/game';
 import { Plus, X, Shield, Brain, Palette, Clock, Users, Sparkles } from 'lucide-react';
@@ -37,6 +37,17 @@ export function CreateTaskDialog({ isOpen, onClose }: CreateTaskDialogProps) {
   const [recurrence, setRecurrence] = useState<TaskRecurrence>('one_time');
   const [dueDate, setDueDate] = useState('');
   const [validationError, setValidationError] = useState<string | null>(null);
+
+  // Close dialog on Escape key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && isOpen) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
 
   const createMutation = useMutation({
     mutationFn: async () => {
@@ -152,13 +163,14 @@ export function CreateTaskDialog({ isOpen, onClose }: CreateTaskDialogProps) {
                   id="quest-title"
                   type="text"
                   required
+                  autoFocus
                   value={title}
                   onChange={(e) => {
                     setTitle(e.target.value);
                     if (validationError) setValidationError(null);
                   }}
                   placeholder="e.g. Read 20 pages of clean code"
-                  className="w-full px-3.5 py-2.5 bg-secondary/50 border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all"
+                  className="w-full px-3.5 py-2.5 bg-secondary/50 border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary outline-none transition-all"
                 />
               </div>
 
@@ -173,7 +185,7 @@ export function CreateTaskDialog({ isOpen, onClose }: CreateTaskDialogProps) {
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Details, victory conditions, or notes..."
-                  className="w-full px-3.5 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all resize-none"
+                  className="w-full px-3.5 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-1 focus:ring-primary focus-visible:ring-2 focus-visible:ring-primary outline-none transition-all resize-none"
                 />
               </div>
 
@@ -191,7 +203,7 @@ export function CreateTaskDialog({ isOpen, onClose }: CreateTaskDialogProps) {
                         key={attr.id}
                         type="button"
                         onClick={() => setAttribute(attr.id)}
-                        className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all ${
+                        className={`flex items-center gap-2 p-2.5 rounded-xl border text-left transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                           isSelected
                             ? 'bg-primary/15 border-primary text-primary font-bold shadow-sm'
                             : 'bg-secondary/30 border-border/80 hover:bg-secondary text-muted-foreground'
@@ -218,7 +230,7 @@ export function CreateTaskDialog({ isOpen, onClose }: CreateTaskDialogProps) {
                         key={diff.id}
                         type="button"
                         onClick={() => setDifficulty(diff.id)}
-                        className={`py-2 px-1 rounded-xl border text-center transition-all ${
+                        className={`py-2 px-1 rounded-xl border text-center transition-all focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none ${
                           isSelected
                             ? 'bg-primary border-primary text-primary-foreground font-bold shadow-md'
                             : 'bg-secondary/30 border-border/80 hover:bg-secondary text-muted-foreground'
@@ -242,7 +254,7 @@ export function CreateTaskDialog({ isOpen, onClose }: CreateTaskDialogProps) {
                     id="quest-recurrence"
                     value={recurrence}
                     onChange={(e) => setRecurrence(e.target.value as TaskRecurrence)}
-                    className="w-full px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground focus:border-primary outline-none"
+                    className="w-full px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground focus:border-primary focus-visible:ring-2 focus-visible:ring-primary outline-none"
                   >
                     <option value="one_time">One-Time Quest</option>
                     <option value="daily">Daily Habit</option>
@@ -260,9 +272,8 @@ export function CreateTaskDialog({ isOpen, onClose }: CreateTaskDialogProps) {
                     type="date"
                     value={dueDate}
                     onChange={(e) => setDueDate(e.target.value)}
-                    className="w-full px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground focus:border-primary outline-none"
-                  >
-                  </input>
+                    className="w-full px-3 py-2 bg-secondary/50 border border-border rounded-xl text-sm text-foreground focus:border-primary focus-visible:ring-2 focus-visible:ring-primary outline-none [color-scheme:dark]"
+                  />
                 </div>
               </div>
 
@@ -278,14 +289,14 @@ export function CreateTaskDialog({ isOpen, onClose }: CreateTaskDialogProps) {
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors"
+                  className="px-4 py-2 rounded-xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-secondary transition-colors focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={createMutation.isPending}
-                  className="px-5 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-md hover:bg-primary/90 transition-all flex items-center gap-1.5 disabled:opacity-50"
+                  className="px-5 py-2 rounded-xl bg-primary text-primary-foreground font-bold text-sm shadow-md hover:bg-primary/90 transition-all flex items-center gap-1.5 disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none"
                 >
                   <Plus className="w-4 h-4" />
                   <span>{createMutation.isPending ? 'Forging...' : 'Add Quest'}</span>

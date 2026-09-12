@@ -150,6 +150,16 @@ body {
   outline-offset: 2px;
 }
 
+/* Safe area padding for mobile navigation */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0.75rem);
+}
+
+/* Native input date picker dark scheme */
+input[type="date"] {
+  color-scheme: dark;
+}
+
 /* Glowing utilities */
 .glow-primary {
   box-shadow: 0 0 20px -3px hsl(var(--primary) / 0.35);
@@ -166,3 +176,16 @@ body {
 .text-glow {
   text-shadow: 0 0 12px hsl(var(--primary) / 0.6);
 }
+
+/* Accessibility: Respect user motion reduction preference */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
