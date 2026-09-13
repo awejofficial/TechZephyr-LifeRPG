@@ -21,17 +21,28 @@ export function StatsHUD({ initialProfile }: { initialProfile?: UserProfile }) {
     refetchInterval: 10000,
   });
 
-  const level = profile?.level ?? 17;
-  const currentXp = profile?.current_xp ?? 2840;
+  const level = profile?.level ?? 1;
+  const currentXp = profile?.current_xp ?? 0;
   const xpNeeded = xpForLevel(level);
-  const gold = profile?.gold ?? 1240;
-  const streak = profile?.current_streak ?? 12;
-  const username = profile?.username || 'Awej';
+  const gold = profile?.gold ?? 0;
+  const streak = profile?.current_streak ?? 0;
+  const username = profile?.username || 'Hero';
+
+  const rankTitle =
+    level >= 20
+      ? 'Legendary Grandmaster'
+      : level >= 15
+      ? 'Code Alchemist'
+      : level >= 10
+      ? 'Elite Vanguard'
+      : level >= 5
+      ? 'Adept Explorer'
+      : 'Novice Adventurer';
 
   return (
     <header className="sticky top-0 z-30 w-full bg-card/90 backdrop-blur-xl border-b border-border/70 px-4 sm:px-6 py-2.5">
       <div className="max-w-7xl mx-auto flex items-center justify-between gap-3">
-        {/* Left: Player Profile Chip matching Reference */}
+        {/* Left: Player Profile Chip */}
         <Link
           href="/dashboard/character"
           className="flex items-center gap-3 group rounded-xl p-1 -m-1 focus-visible:ring-2 focus-visible:ring-primary focus-visible:outline-none transition-transform hover:scale-[1.02]"
@@ -63,7 +74,7 @@ export function StatsHUD({ initialProfile }: { initialProfile?: UserProfile }) {
               </span>
             </div>
             <span className="text-[10px] text-muted-foreground font-mono">
-              Code Alchemist
+              {rankTitle}
             </span>
           </div>
         </Link>
