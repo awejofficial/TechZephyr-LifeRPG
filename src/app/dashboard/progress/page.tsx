@@ -2,7 +2,8 @@
 
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { UserProfile } from '@/types/game';
+import { UserProfile, Task } from '@/types/game';
+import { xpForLevel } from '@/lib/xp-engine';
 import {
   TrendingUp,
   Brain,
@@ -13,23 +14,15 @@ import {
   CheckCircle2,
   Trophy,
   Calendar,
+  Zap,
+  Sparkles,
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-
-const WEEKLY_XP = [
-  { day: 'Mon', xp: 240, height: '48%' },
-  { day: 'Tue', xp: 380, height: '76%' },
-  { day: 'Wed', xp: 310, height: '62%' },
-  { day: 'Thu', xp: 450, height: '90%' },
-  { day: 'Fri', xp: 500, height: '100%' },
-  { day: 'Sat', xp: 350, height: '70%' },
-  { day: 'Sun', xp: 280, height: '56%' },
-];
 
 export default function ProgressPage() {
   const [timeframe, setTimeframe] = useState<'7D' | '30D' | '90D'>('7D');
 
-  const { data } = useQuery<{ profile: UserProfile }>({
+  const { data: profileData } = useQuery<{ profile: UserProfile }>({
     queryKey: ['character'],
     queryFn: async () => {
       const res = await fetch('/api/character');
@@ -38,45 +31,59 @@ export default function ProgressPage() {
     },
   });
 
-  const profile = data?.profile;
-  const level = profile?.level ?? 17;
-  const currentXp = profile?.current_xp ?? 2840;
-  const xpNeeded = 3200;
+  const { data: tasksData } = useQuery<{ tasks: Task[] }>({
+    queryKey: ['tasks'],
+    queryFn: async () => {
+      const res = await fetch('/api/tasks');
+      if (!res.ok) throw new Error('Failed to load tasks');
+      return res.json();
+    },
+  });
+
+  const profile = profileData?.profile;
+  const level = profile?.level ?? 1;
+  const currentXp = profile?.current_xp ?? 0;
+  const xpNeeded = xpForLevel(level);
   const xpPercent = Math.min(100, Math.max(0, (currentXp / xpNeeded) * 100));
+  const totalXp = profile?.total_xp_earned ?? 0;
+  const streak = profile?.current_streak ?? 0;
+
+  const tasks = tasksData?.tasks || [];
+  const completedTasks = tasks.filter((t) => t.is_completed);
+  const completedCount = completedTasks.length;
+
+  const intStat = 10 + Math.floor((profile?.intellect_xp || 0) / 10);
+  const strStat = 10 + Math.floor((profile?.strength_xp || 0) / 10);
+  const focusStat = 10 + Math.floor((profile?.creativity_xp || 0) / 10);
+  const discStat = 10 + Math.floor((profile?.discipline_xp || 0) / 10);
+
+  const streakMultiplier = (1 + Math.min(0.5, streak * 0.05)).toFixed(2);
+
+  // Dynamic days calculation
+  const daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+  const todayIndex = (new Date().getDay() + 6) % 7; // Monday = 0
 
   return (
     <div className="space-y-8 pb-12 max-w-5xl mx-auto">
-      {/* Header matching Reference */}
+      {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl sm:text-3xl font-display font-black text-foreground tracking-tight">
-            Progress
+            Progression Analytics
           </h1>
           <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">
-            Track your growth. See how far you've come.
+            Track your real-time level progress, habit momentum, and stat scaling.
           </p>
         </div>
 
-        {/* Timeframe Toggles */}
-        <div className="flex items-center gap-1.5 p-1 rounded-xl bg-card border border-border/70 shrink-0">
-          {(['7D', '30D', '90D'] as const).map((t) => (
-            <button
-              key={t}
-              type="button"
-              onClick={() => setTimeframe(t)}
-              className={`px-3 py-1 rounded-lg text-xs font-mono font-bold transition-all ${
-                timeframe === t
-                  ? 'bg-primary text-primary-foreground shadow-sm'
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
-              {t}
-            </button>
-          ))}
+        {/* Streak Multiplier Badge */}
+        <div className="flex items-center gap-2 px-4 py-2 rounded-2xl bg-streak/10 border border-streak/30 text-streak font-mono font-bold text-xs shadow-sm">
+          <Flame className="w-4 h-4 fill-streak" />
+          <span>{streakMultiplier}x XP Multiplier Active</span>
         </div>
       </div>
 
-      {/* Main Level Progress Banner matching Reference */}
+      {/* Main Level Progress Banner */}
       <div className="bg-card/90 backdrop-blur-xl border border-border/80 rounded-3xl p-6 sm:p-8 shadow-xl">
         <div className="flex items-baseline justify-between mb-2">
           <div>
@@ -88,9 +95,9 @@ export default function ProgressPage() {
             </p>
           </div>
           <div className="text-right">
-            <span className="text-xs font-mono text-muted-foreground block">Next Milestone</span>
+            <span className="text-xs font-mono text-muted-foreground block">Next Tier Target</span>
             <span className="text-sm font-bold font-mono text-cyan-400">
-              Level {level + 1} (+{xpNeeded - currentXp} XP)
+              Level {level + 1} ({Math.max(0, xpNeeded - currentXp)} XP Remaining)
             </span>
           </div>
         </div>
@@ -105,37 +112,46 @@ export default function ProgressPage() {
         </div>
       </div>
 
-      {/* 3 KPI Cards matching Reference */}
+      {/* 3 Real KPI Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="p-5 rounded-2xl bg-card/85 backdrop-blur-xl border border-border/70 shadow-lg text-center">
           <span className="text-xs font-mono text-muted-foreground uppercase block mb-1">
-            Total XP
+            Total XP Earned
           </span>
-          <div className="text-2xl font-display font-black text-primary">18,420</div>
+          <div className="text-2xl font-display font-black text-primary">
+            {totalXp.toLocaleString()}
+          </div>
         </div>
 
         <div className="p-5 rounded-2xl bg-card/85 backdrop-blur-xl border border-border/70 shadow-lg text-center">
           <span className="text-xs font-mono text-muted-foreground uppercase block mb-1">
             Quests Completed
           </span>
-          <div className="text-2xl font-display font-black text-foreground">37</div>
+          <div className="text-2xl font-display font-black text-foreground">
+            {completedCount}
+          </div>
         </div>
 
         <div className="p-5 rounded-2xl bg-card/85 backdrop-blur-xl border border-border/70 shadow-lg text-center">
           <span className="text-xs font-mono text-muted-foreground uppercase block mb-1">
             Current Streak
           </span>
-          <div className="text-2xl font-display font-black text-streak">12 days</div>
+          <div className="text-2xl font-display font-black text-streak">
+            {streak} {streak === 1 ? 'day' : 'days'}
+          </div>
         </div>
       </div>
 
-      {/* Analytics Deck: Attribute Growth (Left) & Weekly XP Chart (Right) */}
+      {/* Analytics Deck: Attribute Growth (Left) & Streak Guidance (Right) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Attribute Growth (6 Cols) */}
         <div className="lg:col-span-6 bg-card/90 backdrop-blur-xl border border-border/80 rounded-3xl p-6 shadow-xl space-y-4">
-          <h3 className="font-display font-black text-base text-foreground">
-            Attribute Growth
-          </h3>
+          <div className="flex items-center justify-between">
+            <h3 className="font-display font-black text-base text-foreground">
+              Attribute Ratings
+            </h3>
+            <span className="text-xs font-mono text-muted-foreground">Level 1 Base: 10</span>
+          </div>
 
           <div className="space-y-3">
             <div className="flex items-center justify-between text-xs font-mono">
@@ -143,10 +159,13 @@ export default function ProgressPage() {
                 <Brain className="w-3.5 h-3.5" />
                 <span>Intelligence</span>
               </div>
-              <span className="font-bold text-foreground">42</span>
+              <span className="font-bold text-foreground">{intStat}</span>
             </div>
             <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-              <div className="h-full bg-cyan-400 rounded-full w-[84%]" />
+              <div
+                className="h-full bg-cyan-400 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, (intStat / 50) * 100)}%` }}
+              />
             </div>
 
             <div className="flex items-center justify-between text-xs font-mono pt-1">
@@ -154,10 +173,13 @@ export default function ProgressPage() {
                 <Shield className="w-3.5 h-3.5" />
                 <span>Strength</span>
               </div>
-              <span className="font-bold text-foreground">28</span>
+              <span className="font-bold text-foreground">{strStat}</span>
             </div>
             <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-              <div className="h-full bg-rose-400 rounded-full w-[56%]" />
+              <div
+                className="h-full bg-rose-400 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, (strStat / 50) * 100)}%` }}
+              />
             </div>
 
             <div className="flex items-center justify-between text-xs font-mono pt-1">
@@ -165,10 +187,13 @@ export default function ProgressPage() {
                 <Crosshair className="w-3.5 h-3.5" />
                 <span>Focus</span>
               </div>
-              <span className="font-bold text-foreground">35</span>
+              <span className="font-bold text-foreground">{focusStat}</span>
             </div>
             <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-              <div className="h-full bg-purple-400 rounded-full w-[70%]" />
+              <div
+                className="h-full bg-purple-400 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, (focusStat / 50) * 100)}%` }}
+              />
             </div>
 
             <div className="flex items-center justify-between text-xs font-mono pt-1">
@@ -176,55 +201,54 @@ export default function ProgressPage() {
                 <Clock className="w-3.5 h-3.5" />
                 <span>Discipline</span>
               </div>
-              <span className="font-bold text-foreground">38</span>
+              <span className="font-bold text-foreground">{discStat}</span>
             </div>
             <div className="h-2 w-full bg-secondary rounded-full overflow-hidden">
-              <div className="h-full bg-amber-400 rounded-full w-[76%]" />
+              <div
+                className="h-full bg-amber-400 rounded-full transition-all duration-500"
+                style={{ width: `${Math.min(100, (discStat / 50) * 100)}%` }}
+              />
             </div>
           </div>
         </div>
 
-        {/* Weekly XP Bar Chart (6 Cols) */}
-        <div className="lg:col-span-6 bg-card/90 backdrop-blur-xl border border-border/80 rounded-3xl p-6 shadow-xl flex flex-col justify-between">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="font-display font-black text-base text-foreground">
-              Weekly XP
-            </h3>
-            <span className="text-[11px] font-mono text-primary font-bold">
-              2,470 XP Total
-            </span>
+        {/* Motivational Streak & Level Calculator (6 Cols) */}
+        <div className="lg:col-span-6 bg-card/90 backdrop-blur-xl border border-border/80 rounded-3xl p-6 shadow-xl flex flex-col justify-between space-y-4">
+          <div>
+            <div className="flex items-center gap-2 mb-2">
+              <Zap className="w-5 h-5 text-amber-400" />
+              <h3 className="font-display font-black text-base text-foreground">
+                Level Catalyst & Streak Mechanics
+              </h3>
+            </div>
+            <p className="text-xs text-muted-foreground leading-relaxed">
+              Every day you complete at least one active quest, your daily streak increases by 1 and grants a +5% cumulative XP boost on all future quest completions (capped at +50%).
+            </p>
           </div>
 
-          {/* Bar Chart Visualization matching Reference */}
-          <div className="h-44 flex items-end justify-between gap-2 pt-6 pb-2 px-2 border-b border-border/50">
-            {WEEKLY_XP.map((bar, i) => (
-              <div key={bar.day} className="flex-1 flex flex-col items-center h-full justify-end group">
-                <div className="text-[10px] font-mono text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity mb-1">
-                  {bar.xp}
-                </div>
-                <div
-                  className="w-full max-w-[28px] rounded-t-lg bg-gradient-to-t from-primary via-purple-500 to-cyan-400 transition-all duration-500 group-hover:brightness-125 shadow-md shadow-primary/20"
-                  style={{ height: bar.height }}
-                />
-              </div>
-            ))}
-          </div>
-
-          <div className="flex justify-between text-[11px] font-mono text-muted-foreground pt-2 px-2">
-            {WEEKLY_XP.map((bar) => (
-              <span key={bar.day} className="flex-1 text-center font-bold">
-                {bar.day}
+          <div className="p-4 rounded-2xl bg-background/60 border border-border/60 space-y-3">
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">Streak Bonus</span>
+              <span className="text-streak font-bold">+{Math.round((parseFloat(streakMultiplier) - 1) * 100)}% XP</span>
+            </div>
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">Milestone Status</span>
+              <span className="text-cyan-400 font-bold">
+                {currentXp >= xpNeeded ? 'Ready to Level Up!' : `${xpNeeded - currentXp} XP to Level ${level + 1}`}
               </span>
-            ))}
+            </div>
+            <div className="flex items-center justify-between text-xs font-mono">
+              <span className="text-muted-foreground">Daily Loot Chest</span>
+              <span className="text-gold font-bold">
+                {completedCount >= 3 ? 'Unlocked 🎁' : `${Math.min(completedCount, 3)}/3 completed today`}
+              </span>
+            </div>
           </div>
-        </div>
-      </div>
 
-      {/* Bottom Inscription matching Reference */}
-      <div className="text-center pt-4">
-        <p className="text-xs font-mono text-muted-foreground/80 italic">
-          "Consistency turns effort into results."
-        </p>
+          <p className="text-xs font-mono text-muted-foreground text-center italic">
+            "Small habits repeated daily compound into monumental power."
+          </p>
+        </div>
       </div>
     </div>
   );
